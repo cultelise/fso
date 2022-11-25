@@ -1,17 +1,50 @@
-import './App.css';
-import Note from './components/Course';
+import "./App.css";
+import Note from "./components/Note";
+import { useState } from "react";
 
-const App = ({ notes } ) => {
+const App = (props) => {
+  const [notes, setNotes] = useState(props.notes);
+  const [newNote, setNewNote] = useState('a new note...')
+  const [showAll, setShowAll] = useState(false)
+
+  const notesToShow = showAll ? notes : notes.filter((note) => note.important);
+
+  const addNote = (event) => {
+    event.preventDefault()
+    const noteObject = {
+      content: newNote,
+      date: new Date().toISOString(),
+      important: Math.random() < 0.5,
+      id: notes.length + 1,
+    }
+    setNotes(notes.concat(noteObject))
+    setNewNote('')
+  }
+
+  const handleNoteChange = (event) => {
+    console.log(event.target.value)
+    setNewNote(event.target.value)
+  }
+
+  const displayNotes = () => {
+    return showAll ? 'Show Important': 'Show All';
+  }
+
   return (
     <div>
       <h1>Notes</h1>
+      <button onClick={() => setShowAll(!showAll)}>{displayNotes()}</button>
       <ul>
-        {notes.map(note => 
+        {notesToShow.map((note) => (
           <Note key={note.id} note={note} />
-        )}
+        ))}
       </ul>
+      <form action="" onSubmit={addNote}>
+        <input value={newNote} onChange={handleNoteChange}/>
+        <button type="submit">save</button>
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
