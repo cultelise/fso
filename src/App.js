@@ -1,10 +1,10 @@
 import "./App.css";
 import { useState } from "react";
-import Input from "./components/Input";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import axios from "axios";
 import { useEffect } from "react";
+import Filter from "./components/Filter";
 
 const App = (props) => {
   const [notes, setNotes] = useState([])
@@ -75,11 +75,7 @@ const App = (props) => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Input
-        label={"filter shown with"}
-        value={newFilter}
-        onChange={getNewFilter}
-      />
+      <Filter persons={persons} newFilter={newFilter} getNewFilter={getNewFilter} />
       <h2>Add New</h2>
       <PersonForm newName={newName} getNewName={getNewName}
       newNumber={newNumber} getNewNumber={getNewNumber}
