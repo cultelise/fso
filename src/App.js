@@ -1,48 +1,74 @@
 import "./App.css";
-import Note from "./components/Note";
 import { useState } from "react";
+import Input from "./components/Input";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes);
-  const [newNote, setNewNote] = useState('a new note...')
-  const [showAll, setShowAll] = useState(false)
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", id: 1, number: "123-321-4567" }, { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
+  ]);
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [newFilter, setNewFilter] = useState("");
 
-  const notesToShow = showAll ? notes : notes.filter((note) => note.important);
+  const getNewName = (event) => {
+    setNewName(event.target.value);
+  };
 
-  const addNote = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() < 0.5,
-      id: notes.length + 1,
+  const getNewNumber = (event) => {
+    setNewNumber(event.target.value);
+  };
+
+  const getNewFilter = (event) => {
+    setNewFilter(event.target.value);
+    getFilteredEntries();
+  };
+
+  const getFilteredEntries = (event) => {
+    return persons.filter((x) =>
+      x.name.toLowerCase().includes(newFilter.toLowerCase())
+    );
+  };
+
+  const addPerson = (event) => {
+    event.preventDefault();
+    if (persons.find((object) => object.name === newName)) {
+      return alert(`${newName} is already in the phonebook!`);
     }
-    setNotes(notes.concat(noteObject))
-    setNewNote('')
-  }
+    setPersons(
+      persons.concat({
+        name: newName,
+        id: persons.length + 1,
+        number: newNumber,
+      })
+    );
+    setNewName("");
+    setNewNumber("");
+  };
 
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
-  }
-
-  const displayNotes = () => {
-    return showAll ? 'Show Important': 'Show All';
-  }
+  const handleKeyDown = (event) => {
+    console.log(event.target);
+    if (event.key === "enter") addPerson();
+  };
 
   return (
     <div>
-      <h1>Notes</h1>
-      <button onClick={() => setShowAll(!showAll)}>{displayNotes()}</button>
-      <ul>
-        {notesToShow.map((note) => (
-          <Note key={note.id} note={note} />
-        ))}
-      </ul>
-      <form action="" onSubmit={addNote}>
-        <input value={newNote} onChange={handleNoteChange}/>
-        <button type="submit">save</button>
-      </form>
+      <h2>Phonebook</h2>
+      <Input
+        label={"filter shown with"}
+        value={newFilter}
+        onChange={getNewFilter}
+      />
+      <h2>Add New</h2>
+      <PersonForm newName={newName} getNewName={getNewName}
+      newNumber={newNumber} getNewNumber={getNewNumber}
+      addPerson={addPerson} handleKeyDown={handleKeyDown}
+      />
+      <h2>Numbers</h2>
+      <Persons persons={getFilteredEntries()} />
     </div>
   );
 };
