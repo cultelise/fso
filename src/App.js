@@ -7,7 +7,7 @@ import Countries from "./components/Countries";
 
 const App = (props) => {
   const [countries, setCountries] = useState([])
-  const [newFilter, setNewFilter] = useState([])
+  const [newFilter, setNewFilter] = useState("")
 
   useEffect(() => {
     axios
