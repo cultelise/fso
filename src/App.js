@@ -21,17 +21,22 @@ const App = () => {
   };
 
   const getFilteredEntries = () => {
+    const filteredCountries = countries.filter((x) =>
+      x.name.common.toLowerCase().includes(newFilter.toLowerCase())
+    );
     if (newFilter === "") {
-      return []
+      return [];
     } else {
-      if (
-        countries.filter((x)=>x.name.common.toLowerCase().includes(newFilter.toLowerCase())).length >
-        10
-      ) {
-        console.log(countries)
-        return [{name: {common: "Be More Specific!"}}];
-      } else return countries.filter((x)=>x.name.common.toLowerCase().includes(newFilter.toLowerCase()))
-  };}
+      if (filteredCountries.length > 10) {
+        return [{ name: { common: "Be More Specific!" } }];
+      } else if (filteredCountries.length === 1) {
+        displayCountry();
+        return filteredCountries;
+      } else return filteredCountries;
+    }
+  };
+
+  const displayCountry = () => {};
 
   return (
     <div>
