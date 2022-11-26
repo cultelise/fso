@@ -10,6 +10,8 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [newFilter, setNewFilter] = useState("");
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [button, setButton] = useState(false)
+  const [selected, setSelected] = useState(0)
 
   useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
@@ -18,6 +20,7 @@ const App = () => {
   }, []);
 
   const getNewFilter = (event) => {
+    setButton(false)
     setNewFilter(event.target.value);
     setFilteredCountries(
       countries.filter((x) =>
@@ -40,9 +43,9 @@ const App = () => {
     }
   };
 
-  const displayCountry = () => {
-    const country = filteredCountries[0]
-    if (filteredCountries.length === 1) {
+  const displayCountry = (para = selected) => {
+    const country = filteredCountries[para]
+    if (filteredCountries.length === 1 || button) {
       const img = country.flags.svg;
       const langs= []
       for (let language in country.languages) {
@@ -52,10 +55,10 @@ const App = () => {
         <div>
           <h2>{country.name.common}</h2>
           <p>Capital: {country.capital[0]}</p>
-          <p>Area: {country.area}</p>
+          <p>Area: {country.area} </p>
           <h4>Languages:</h4>
           <ul> 
-            {langs.map(x => <li>{country.languages[x]}</li>)}
+            {langs.map(x => <li key={country.languages[x]}>{country.languages[x]}</li>)}
           </ul>
           <img alt='country flag' src={img}></img>  
         </div>
@@ -63,10 +66,15 @@ const App = () => {
     } else return "";
   };
 
+  const showCountry = (event) => {
+    setButton(true)
+    setSelected(event.target.id)
+  }
+
   return (
     <div>
       <Filter label={"countries"} value={newFilter} onChange={getNewFilter} />
-      <Countries countries={getFilteredEntries()} />
+      <Countries countries={getFilteredEntries()} onClick={(event) => showCountry(event)}/>
       <DisplayCountry
         className="display-country"
         displayCountry={displayCountry()}
