@@ -25,7 +25,7 @@ const App = (props) => {
   const getFilteredList = (value) => {
     console.log(value)
     setNewFilter(value);
-    getFilteredEntries(value);
+    getFilteredEntries();
   };
 
   const filteredList = (value) => {
@@ -34,9 +34,9 @@ const App = (props) => {
     else return getFilteredList(value);
   }
 
-  const getFilteredEntries = (value) => {
+  const getFilteredEntries = () => {
      return countries.filter((x) => {
-      return x.name.common.toLowerCase().includes(value.toLowerCase())
+      return x.name.common.toLowerCase().includes(newFilter.toLowerCase())
       }
     );
   };
@@ -44,7 +44,7 @@ const App = (props) => {
   return (
     <div>
       <Filter label={'countries'} value={newFilter} onChange={getNewFilter}/>
-      <Countries countries={filteredList(newFilter)} />
+      <Countries countries={getFilteredEntries()} />
     </div>
   )
 };
