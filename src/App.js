@@ -19,21 +19,32 @@ const App = (props) => {
 
   const getNewFilter = (event) => {
     setNewFilter(event.target.value);
-    getFilteredEntries();
+    getFilteredEntries(event.target.value);
   };
 
-  const getFilteredEntries = (event) => {
-    return countries.filter((x) => {
-    console.log(x.name.common.toLowerCase())
-     return x.name.common.toLowerCase().includes(newFilter.toLowerCase())
-    }
+  const getFilteredList = (value) => {
+    console.log(value)
+    setNewFilter(value);
+    getFilteredEntries(value);
+  };
+
+  const filteredList = (value) => {
+    if (countries === []) return;
+    if (countries !== [] && value === undefined) return countries;
+    else return getFilteredList(value);
+  }
+
+  const getFilteredEntries = (value) => {
+     return countries.filter((x) => {
+      return x.name.common.toLowerCase().includes(value.toLowerCase())
+      }
     );
   };
 
   return (
     <div>
-      <Filter label={'countries'} onChange={getNewFilter}/>
-      <Countries countries={countries} />
+      <Filter label={'countries'} value={newFilter} onChange={getNewFilter}/>
+      <Countries countries={filteredList(newFilter)} />
     </div>
   )
 };

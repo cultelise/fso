@@ -5,7 +5,7 @@ const Filter = (props) => {
   return (
     <Input
         label={"filter shown with"}
-        value={props.newFilter}
+        value={props.value}
         onChange={props.onChange}
       />
   )
