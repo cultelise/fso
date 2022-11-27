@@ -6,7 +6,10 @@ const Persons = (props) => {
     {props.persons.map((x) => (
       <ListItem key={x.id}
         content={x.name + ': ' + x.number}
+        onClick={(event) => props.onClick(event)}
+        id={x.id}
       />
+      
     ))}
   </ul>
   )

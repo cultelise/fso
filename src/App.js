@@ -2,35 +2,24 @@ import "./App.css";
 import { useState } from "react";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
 import { useEffect } from "react";
 import Filter from "./components/Filter";
+import Notes from "./components/Notes";
+import personService from "./services/persons";
 
-const App = (props) => {
-  const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(true)
+const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
 
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
-    })
-  }, [])
-
-  useEffect(() => {
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        setNotes(response.data)
-      })
-  }, [])
-  
+    const getInitialPersons = async () => {
+      const initialPersons = await personService.getAll();
+      setPersons(initialPersons);
+    };
+    getInitialPersons();
+  }, []);
 
   const getNewName = (event) => {
     setNewName(event.target.value);
@@ -51,20 +40,52 @@ const App = (props) => {
     );
   };
 
-  const addPerson = (event) => {
+  const addPerson = async (event) => {
     event.preventDefault();
     if (persons.find((object) => object.name === newName)) {
-      return alert(`${newName} is already in the phonebook!`);
-    }
-    setPersons(
-      persons.concat({
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook! Replace the old number with a new one?`
+        )
+      ) {
+        const person = persons.find((object) => object.name === newName);
+        const newPersonNumber = {
+          ...person,
+          number: newNumber,
+        };
+        const updatedPerson = await personService.update(
+          person.id,
+          newPersonNumber
+        );
+        setPersons(
+          persons.map((person) =>
+            person.name !== newName ? person : updatedPerson
+          )
+        );
+        setNewName("");
+        setNewNumber("");
+      }
+    } else {
+      const newPersonObject = {
         name: newName,
-        id: persons.length + 1,
         number: newNumber,
-      })
-    );
-    setNewName("");
-    setNewNumber("");
+      };
+      const returnedPerson = await personService.create(newPersonObject);
+      setPersons(persons.concat(returnedPerson));
+      setNewName("");
+      setNewNumber("");
+    }
+  };
+
+  const deletePerson = async (event) => {
+    const person = persons.filter((p) => {
+      return p.id.toString() === event.target.id;
+    });
+    if (window.confirm(`Delete ${person[0].name}?`)) {
+      personService.remove(event.target.id);
+      const modifiedPersons = await personService.getAll();
+      setPersons(modifiedPersons);
+    }
   };
 
   const handleKeyDown = (event) => {
@@ -75,15 +96,27 @@ const App = (props) => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter persons={persons} newFilter={newFilter} getNewFilter={getNewFilter} />
-      <h2>Add New</h2>
-      <PersonForm newName={newName} getNewName={getNewName}
-      newNumber={newNumber} getNewNumber={getNewNumber}
-      addPerson={addPerson} handleKeyDown={handleKeyDown}
+      <Filter
+        persons={persons}
+        newFilter={newFilter}
+        getNewFilter={getNewFilter}
+      />
+      <h2>Add Person</h2>
+      <PersonForm
+        newName={newName}
+        getNewName={getNewName}
+        newNumber={newNumber}
+        getNewNumber={getNewNumber}
+        addPerson={addPerson}
+        handleKeyDown={handleKeyDown}
       />
       <h2>Numbers</h2>
-      <Persons persons={getFilteredEntries()} />
-      <p>{props.notes}</p>
+      <Persons
+        persons={getFilteredEntries()}
+        onClick={(event) => deletePerson(event)}
+      />
+      <h2>Notes</h2>
+      <Notes />
     </div>
   );
 };
