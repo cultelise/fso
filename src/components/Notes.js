@@ -46,7 +46,7 @@ const Notes = () => {
   return (
     <div>
       <form action="" onSubmit={addNote}>
-        <label htmlFor="note">note</label>
+        <label htmlFor="note">note:</label>
         <input id="note" value={newNote} onChange={handleNoteInput}></input>
         <button type="submit">add note</button>
       </form>

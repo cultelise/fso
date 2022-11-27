@@ -6,12 +6,15 @@ import { useEffect } from "react";
 import Filter from "./components/Filter";
 import Notes from "./components/Notes";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState();
+  const [classNames, setClassNames] = useState('hide')
 
   useEffect(() => {
     const getInitialPersons = async () => {
@@ -42,6 +45,7 @@ const App = () => {
 
   const addPerson = async (event) => {
     event.preventDefault();
+    try {
     if (persons.find((object) => object.name === newName)) {
       if (
         window.confirm(
@@ -64,7 +68,12 @@ const App = () => {
         );
         setNewName("");
         setNewNumber("");
-      }
+      } setClassNames('success show')
+      setErrorMessage(`${newName} added.`)
+      setTimeout(() => {
+        setErrorMessage('')
+        setClassNames('hide')
+      }, 3000);
     } else {
       const newPersonObject = {
         name: newName,
@@ -74,17 +83,34 @@ const App = () => {
       setPersons(persons.concat(returnedPerson));
       setNewName("");
       setNewNumber("");
+      setClassNames('success show')
+      setErrorMessage(`${newName} added.`)
+      setTimeout(() => {
+        setErrorMessage('')
+        setClassNames('hide')
+      }, 3000);
+    }} catch (error) {
+      
     }
   };
 
   const deletePerson = async (event) => {
-    const person = persons.filter((p) => {
+    const person = persons.find((p) => {
       return p.id.toString() === event.target.id;
     });
-    if (window.confirm(`Delete ${person[0].name}?`)) {
+    try {
+      if (window.confirm(`Delete ${person.name}?`)) {
       personService.remove(event.target.id);
       const modifiedPersons = await personService.getAll();
       setPersons(modifiedPersons);
+      setClassNames('error show')
+      setErrorMessage(`${person.name} deleted.`)
+      setTimeout(() => {
+        setErrorMessage('')
+        setClassNames('hide')
+      }, 3000);
+    }} catch (error) {
+      setErrorMessage('Person already deleted');
     }
   };
 
@@ -95,13 +121,14 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <Filter
         persons={persons}
         newFilter={newFilter}
         getNewFilter={getNewFilter}
       />
       <h2>Add Person</h2>
+      <Notification classNames={classNames} message={errorMessage} />
       <PersonForm
         newName={newName}
         getNewName={getNewName}
@@ -115,7 +142,7 @@ const App = () => {
         persons={getFilteredEntries()}
         onClick={(event) => deletePerson(event)}
       />
-      <h2>Notes</h2>
+      <h1>Notes</h1>
       <Notes />
     </div>
   );
