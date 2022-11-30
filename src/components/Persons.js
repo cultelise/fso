@@ -5,7 +5,7 @@ const Persons = (props) => {
     <ul>
     {props.persons.map((x) => (
       <ListItem key={x.id}
-        content={x.name + ': ' + x.number}
+        content={x.name + ': ' + x.phone}
         onClick={(event) => props.onClick(event)}
         id={x.id}
       />

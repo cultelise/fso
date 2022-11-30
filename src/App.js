@@ -1,20 +1,20 @@
-import "./App.css";
-import { useState } from "react";
-import PersonForm from "./components/PersonForm";
-import Persons from "./components/Persons";
-import { useEffect } from "react";
-import Filter from "./components/Filter";
-import Notes from "./components/Notes";
-import personService from "./services/persons";
-import Notification from "./components/Notification";
+import './App.css';
+import { useState } from 'react';
+import PersonForm from './components/PersonForm';
+import Persons from './components/Persons';
+import { useEffect } from 'react';
+import Filter from './components/Filter';
+import Notes from './components/Notes';
+import personService from './services/persons';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [newFilter, setNewFilter] = useState("");
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [newFilter, setNewFilter] = useState('');
   const [errorMessage, setErrorMessage] = useState();
-  const [classNames, setClassNames] = useState('hide')
+  const [classNames, setClassNames] = useState('hide');
 
   useEffect(() => {
     const getInitialPersons = async () => {
@@ -45,7 +45,6 @@ const App = () => {
 
   const addPerson = async (event) => {
     event.preventDefault();
-    try {
     if (persons.find((object) => object.name === newName)) {
       if (
         window.confirm(
@@ -55,7 +54,7 @@ const App = () => {
         const person = persons.find((object) => object.name === newName);
         const newPersonNumber = {
           ...person,
-          number: newNumber,
+          phone: newNumber,
         };
         const updatedPerson = await personService.update(
           person.id,
@@ -66,31 +65,30 @@ const App = () => {
             person.name !== newName ? person : updatedPerson
           )
         );
-        setNewName("");
-        setNewNumber("");
-      } setClassNames('success show')
-      setErrorMessage(`${newName} added.`)
+        setNewName('');
+        setNewNumber('');
+      }
+      setClassNames('success show');
+      setErrorMessage(`${newName} added.`);
       setTimeout(() => {
-        setErrorMessage('')
-        setClassNames('hide')
+        setErrorMessage('');
+        setClassNames('hide');
       }, 3000);
     } else {
       const newPersonObject = {
         name: newName,
-        number: newNumber,
+        phone: newNumber,
       };
       const returnedPerson = await personService.create(newPersonObject);
       setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-      setClassNames('success show')
-      setErrorMessage(`${newName} added.`)
+      setNewName('');
+      setNewNumber('');
+      setClassNames('success show');
+      setErrorMessage(`${newName} added.`);
       setTimeout(() => {
-        setErrorMessage('')
-        setClassNames('hide')
+        setErrorMessage('');
+        setClassNames('hide');
       }, 3000);
-    }} catch (error) {
-      
     }
   };
 
@@ -100,23 +98,24 @@ const App = () => {
     });
     try {
       if (window.confirm(`Delete ${person.name}?`)) {
-      personService.remove(event.target.id);
-      const modifiedPersons = await personService.getAll();
-      setPersons(modifiedPersons);
-      setClassNames('error show')
-      setErrorMessage(`${person.name} deleted.`)
-      setTimeout(() => {
-        setErrorMessage('')
-        setClassNames('hide')
-      }, 3000);
-    }} catch (error) {
+        personService.remove(event.target.id);
+        const modifiedPersons = await personService.getAll();
+        setPersons(modifiedPersons);
+        setClassNames('error show');
+        setErrorMessage(`${person.name} deleted.`);
+        setTimeout(() => {
+          setErrorMessage('');
+          setClassNames('hide');
+        }, 3000);
+      }
+    } catch (error) {
       setErrorMessage('Person already deleted');
     }
   };
 
   const handleKeyDown = (event) => {
     console.log(event.target);
-    if (event.key === "enter") addPerson();
+    if (event.key === 'enter') addPerson();
   };
 
   return (
