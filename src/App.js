@@ -37,7 +37,7 @@ const App = () => {
     getFilteredEntries();
   };
 
-  const getFilteredEntries = (event) => {
+  const getFilteredEntries = () => {
     return persons.filter((x) =>
       x.name.toLowerCase().includes(newFilter.toLowerCase())
     );

@@ -5,7 +5,7 @@ const PersonForm = (props) => {
   return (
     <form>
       <Input label={"name:"} value={props.newName} onChange={props.getNewName} />
-      <Input label={"number:"} value={props.newNumber} onChange={props.getNewNumber} />
+      <Input label={"phone:"} value={props.newNumber} onChange={props.getNewNumber} />
       <button type="submit" onClick={props.addPerson} onKeyDown={props.handleKeyDown}>
       add
       </button>
