@@ -75,20 +75,24 @@ const App = () => {
         setClassNames('hide');
       }, 3000);
     } else {
-      const newPersonObject = {
-        name: newName,
-        phone: newNumber,
-      };
-      const returnedPerson = await personService.create(newPersonObject);
-      setPersons(persons.concat(returnedPerson));
-      setNewName('');
-      setNewNumber('');
-      setClassNames('success show');
-      setErrorMessage(`${newName} added.`);
-      setTimeout(() => {
-        setErrorMessage('');
-        setClassNames('hide');
-      }, 3000);
+      try {
+        const newPersonObject = {
+          name: newName,
+          phone: newNumber,
+        };
+        const returnedPerson = await personService.create(newPersonObject);
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+        setClassNames('success show');
+        setErrorMessage(`${newName} added.`);
+        setTimeout(() => {
+          setErrorMessage('');
+          setClassNames('hide');
+        }, 3000);
+      } catch (error) {
+        console.log(error.message);
+      }
     }
   };
 
