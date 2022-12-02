@@ -44,43 +44,44 @@ const App = () => {
   };
 
   const addPerson = async (event) => {
-    event.preventDefault();
-    if (persons.find((object) => object.name === newName)) {
-      if (
-        window.confirm(
-          `${newName} is already in the phonebook! Replace the old number with a new one?`
-        )
-      ) {
-        const person = persons.find((object) => object.name === newName);
-        const newPersonNumber = {
-          ...person,
-          phone: newNumber,
-        };
-        const updatedPerson = await personService.update(
-          person.id,
-          newPersonNumber
-        );
-        setPersons(
-          persons.map((person) =>
-            person.name !== newName ? person : updatedPerson
+    try {
+      event.preventDefault();
+      if (persons.find((object) => object.name === newName)) {
+        if (
+          window.confirm(
+            `${newName} is already in the phonebook! Replace the old number with a new one?`
           )
-        );
-        setNewName('');
-        setNewNumber('');
-      }
-      setClassNames('success show');
-      setErrorMessage(`${newName} added.`);
-      setTimeout(() => {
-        setErrorMessage('');
-        setClassNames('hide');
-      }, 3000);
-    } else {
-      try {
+        ) {
+          const person = persons.find((object) => object.name === newName);
+          const newPersonNumber = {
+            ...person,
+            phone: newNumber,
+          };
+          const updatedPerson = await personService.update(
+            person.id,
+            newPersonNumber
+          );
+          setPersons(
+            persons.map((person) =>
+              person.name !== newName ? person : updatedPerson
+            )
+          );
+          setNewName('');
+          setNewNumber('');
+          setClassNames('success show');
+          setErrorMessage(`${newName} updated.`);
+          setTimeout(() => {
+            setErrorMessage('');
+            setClassNames('hide');
+          }, 3000);
+        }
+      } else {
         const newPersonObject = {
           name: newName,
           phone: newNumber,
         };
         const returnedPerson = await personService.create(newPersonObject);
+        console.log(returnedPerson);
         setPersons(persons.concat(returnedPerson));
         setNewName('');
         setNewNumber('');
@@ -90,9 +91,9 @@ const App = () => {
           setErrorMessage('');
           setClassNames('hide');
         }, 3000);
-      } catch (error) {
-        console.log(error.message);
       }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 

@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
 
-const baseUrl = "/api/notes";
+const baseUrl = '/api/notes';
 
 const getAll = async () => {
   const request = await axios.get(baseUrl);
@@ -18,15 +18,15 @@ const update = async (id, newObject) => {
 };
 
 const remove = async (id) => {
-  const request = await axios.delete(`${baseUrl}/${id}`)
-  return request.data
-}
+  const request = await axios.delete(`${baseUrl}/${id}`);
+  return request.data;
+};
 
 const noteService = {
   getAll,
   create,
   update,
-  remove
+  remove,
 };
 
 export default noteService;

@@ -1,6 +1,6 @@
-import axios from "axios"
+import axios from 'axios';
 
-const baseUrl = '/api/persons'
+const baseUrl = '/api/persons';
 
 const getAll = async () => {
   const request = await axios.get(baseUrl);
@@ -9,6 +9,7 @@ const getAll = async () => {
 
 const create = async (newObject) => {
   const request = await axios.post(baseUrl, newObject);
+  console.log(request);
   return request.data;
 };
 
@@ -17,15 +18,14 @@ const update = async (id, newObject) => {
   return request.data;
 };
 const remove = async (id) => {
-  const request = await axios.delete(`${baseUrl}/${id}`)
-  return request.data
-}
+  const request = await axios.delete(`${baseUrl}/${id}`);
+  return request.data;
+};
 const personService = {
   getAll,
   create,
   update,
-  remove
+  remove,
 };
 
 export default personService;
-
