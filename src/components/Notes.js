@@ -68,6 +68,17 @@ const Notes = () => {
 
   return (
     <div>
+      <ul>
+        {notesToShow.map((note) => (
+          <Note
+            className={note.id}
+            key={note.id}
+            note={note}
+            toggleImportance={(event) => toggleImportanceOf(event)}
+            deleteNote={(event) => deleteNote(event)}
+          />
+        ))}
+      </ul>
       <form action='' onSubmit={addNote}>
         <label htmlFor='note'>note:</label>
         <input
@@ -81,17 +92,6 @@ const Notes = () => {
       <button onClick={() => setShowAll(!showAll)}>
         show {showAll ? 'important' : 'all'}
       </button>
-      <ul>
-        {notesToShow.map((note) => (
-          <Note
-            className={note.id}
-            key={note.id}
-            note={note}
-            toggleImportance={(event) => toggleImportanceOf(event)}
-            deleteNote={(event) => deleteNote(event)}
-          />
-        ))}
-      </ul>
     </div>
   );
 };
