@@ -194,13 +194,19 @@ const App = () => {
     );
   };
 
+  const logOut = () => {
+    window.localStorage.removeItem('loggedBlogAppUser')
+    setUser(null)
+  }
+
   return (
     <div>
       {
       user === null 
       ? loginForm()
       : <div>
-        <p>{user.name} is logged in</p>
+        <p>{user.name} is logged in
+        <button onClick={logOut}>log out</button></p>
         {noteForm()}
         </div>
         }
