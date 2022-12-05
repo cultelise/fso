@@ -1,14 +1,15 @@
 import './App.css';
-import { useState } from 'react';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Filter from './components/Filter';
-import Notes from './components/Notes';
 import personService from './services/persons';
 import login from './services/login';
 import Notification from './components/Notification';
 import noteService from './services/notes';
+import LoginForm from './components/Login';
+import Togglable from './components/Togglable';
+import NoteForm from './components/NoteForm';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -17,12 +18,10 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('');
   const [errorMessage, setErrorMessage] = useState();
   const [errorClass, setErrorClass] = useState('hide');
-  const [loginClass, setLoginClass] = useState('hide');
-  const [logButtonClass, setLogButtonClass] = useState('show');
-  const [cancelButtonClass, setCancelButtonClass] = useState('hide');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     const getInitialPersons = async () => {
@@ -169,45 +168,7 @@ const App = () => {
     }
   };
 
-  const loginForm = () => {
-    return (
-      <div>
-        <h1>Login</h1>
-        <Notification className={errorClass} message={errorMessage} />
-        <form className={loginClass} onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type='text'
-              value={username}
-              name='Username'
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type='password'
-              value={password}
-              name='Password'
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type='submit'>Login</button>
-        </form>
-        <button className={cancelButtonClass} onClick={hideLogin}>Cancel</button>
-      </div>
-    );
-  };
-
-  const noteForm = () => {
-    return (
-      <div>
-        <h1>Notes</h1>
-        <Notes />
-      </div>
-    );
-  };
+ 
 
   const logOut = () => {
     window.localStorage.clear()
@@ -220,32 +181,42 @@ const App = () => {
     }, 3000);
   }
 
-  const showLogin = () => {
-    setLogButtonClass('hide')
-    setLoginClass('show')
-    setCancelButtonClass('show')
+  const loginForm = () => {
+    return (
+        <div>
+          <Togglable buttonLabel='Login' >
+            <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ value }) => setUsername(value)}
+            handlePasswordChange={({ value }) => setPassword(value)}
+            handleLogin={handleLogin}
+              />
+          </Togglable>
+          <Notification className={errorClass} message={errorMessage} />
+        </div>
+    )
   };
 
-  const hideLogin = () => {
-    setLogButtonClass('show')
-    setLoginClass('hide')
-    setCancelButtonClass('hide')
+  const noteForm = () => {
+    return (
+      <div>
+         <p>{user.name} is logged in
+          <button onClick={logOut}>log out</button></p>
+          <Notification className={errorClass} message={errorMessage} />
+          <NoteForm />
+       </div>
+    )
   };
+
+
 
   return (
     <div>
-      {
-      user === null 
+      { user === null
       ? loginForm()
-      : <div>
-        <p>{user.name} is logged in
-        <button onClick={logOut}>log out</button></p>
-        <Notification className={errorClass} message={errorMessage} />
-        {noteForm()}
-        </div>
-        }
-      <button className={logButtonClass} onClick={showLogin}>Login</button>      
-
+      : noteForm()
+      }
       <h1>Phonebook</h1>
       <Filter
         persons={persons}
