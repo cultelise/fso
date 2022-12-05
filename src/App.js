@@ -16,7 +16,10 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [newFilter, setNewFilter] = useState('');
   const [errorMessage, setErrorMessage] = useState();
-  const [classNames, setClassNames] = useState('hide');
+  const [errorClass, setErrorClass] = useState('hide');
+  const [loginClass, setLoginClass] = useState('hide');
+  const [logButtonClass, setLogButtonClass] = useState('show');
+  const [cancelButtonClass, setCancelButtonClass] = useState('hide');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
@@ -82,11 +85,11 @@ const App = () => {
           );
           setNewName('');
           setNewNumber('');
-          setClassNames('success show');
+          setErrorClass('success show');
           setErrorMessage(`${newName} updated.`);
           setTimeout(() => {
             setErrorMessage('');
-            setClassNames('hide');
+            setErrorClass('hide');
           }, 3000);
         }
       } else {
@@ -99,11 +102,11 @@ const App = () => {
         setPersons(persons.concat(returnedPerson));
         setNewName('');
         setNewNumber('');
-        setClassNames('success show');
+        setErrorClass('success show');
         setErrorMessage(`${newName} added.`);
         setTimeout(() => {
           setErrorMessage('');
-          setClassNames('hide');
+          setErrorClass('hide');
         }, 3000);
       }
     } catch (error) {
@@ -120,11 +123,11 @@ const App = () => {
         personService.remove(event.target.id);
         const modifiedPersons = await personService.getAll();
         setPersons(modifiedPersons);
-        setClassNames('error show');
+        setErrorClass('error show');
         setErrorMessage(`${person.name} deleted.`);
         setTimeout(() => {
           setErrorMessage('');
-          setClassNames('hide');
+          setErrorClass('hide');
         }, 3000);
       }
     } catch (error) {
@@ -148,11 +151,19 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
+      if (user) {
+        setErrorClass('show success');
+        setErrorMessage('Login Successful');
+        setTimeout(() => {
+          setErrorClass('hide');
+          setErrorMessage('');
+        }, 3000);
+      }
     } catch (error) {
-      setClassNames('error show');
+      setErrorClass('show error');
       setErrorMessage('Wrong Credentials');
       setTimeout(() => {
-        setClassNames('hide');
+        setErrorClass('hide');
         setErrorMessage('');
       }, 3000);
     }
@@ -160,28 +171,32 @@ const App = () => {
 
   const loginForm = () => {
     return (
-      <form onSubmit={handleLogin}>
+      <div>
         <h1>Login</h1>
-        <div>
-          username
-          <input
-            type='text'
-            value={username}
-            name='Username'
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            type='password'
-            value={password}
-            name='Password'
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type='submit'>login</button>
-      </form>
+        <Notification className={errorClass} message={errorMessage} />
+        <form className={loginClass} onSubmit={handleLogin}>
+          <div>
+            username
+            <input
+              type='text'
+              value={username}
+              name='Username'
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </div>
+          <div>
+            password
+            <input
+              type='password'
+              value={password}
+              name='Password'
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </div>
+          <button type='submit'>Login</button>
+        </form>
+        <button className={cancelButtonClass} onClick={hideLogin}>Cancel</button>
+      </div>
     );
   };
 
@@ -195,9 +210,27 @@ const App = () => {
   };
 
   const logOut = () => {
-    window.localStorage.removeItem('loggedBlogAppUser')
+    window.localStorage.clear()
     setUser(null)
+    setErrorClass('success show')
+    setErrorMessage('Successfully Logged Out')
+    setTimeout(() => {
+      setErrorClass('hide');
+      setErrorMessage('');
+    }, 3000);
   }
+
+  const showLogin = () => {
+    setLogButtonClass('hide')
+    setLoginClass('show')
+    setCancelButtonClass('show')
+  };
+
+  const hideLogin = () => {
+    setLogButtonClass('show')
+    setLoginClass('hide')
+    setCancelButtonClass('hide')
+  };
 
   return (
     <div>
@@ -207,11 +240,11 @@ const App = () => {
       : <div>
         <p>{user.name} is logged in
         <button onClick={logOut}>log out</button></p>
+        <Notification className={errorClass} message={errorMessage} />
         {noteForm()}
         </div>
         }
-
-      <Notification classNames={classNames} message={errorMessage} />
+      <button className={logButtonClass} onClick={showLogin}>Login</button>      
 
       <h1>Phonebook</h1>
       <Filter

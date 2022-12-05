@@ -1,12 +1,12 @@
 import React from 'react'
 
-const Notification = ({message, handleChange, classNames}) => {
+const Notification = ({message, handleChange, className}) => {
   if (message === null) {
     return null
   }
 
   return (
-    <div onLoad={handleChange} className={classNames}>
+    <div onLoad={handleChange} className={className}>
       {message}
     </div>
   )
